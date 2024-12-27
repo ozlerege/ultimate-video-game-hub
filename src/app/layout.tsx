@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import "../styles/tooltip.css";
 import Sidebar from "@/components/Sidebar";
 
 const inter = Inter({
@@ -32,7 +33,9 @@ export default function RootLayout({
       >
         <div className="flex min-h-screen">
           <Sidebar />
-          <main className="flex-1 ml-64">{children}</main>
+          <main className="flex-1 ml-64 overflow-x-hidden">
+            <div className="container mx-auto">{children}</div>
+          </main>
         </div>
       </body>
     </html>

@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faCalendarDay } from "@fortawesome/free-solid-svg-icons";
 import type { Game, Platform } from "@/interfaces/ApiInterfaces";
 import { getLogo } from "./getLogo";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 interface GameCardProps {
   gameDetails: Game;
@@ -10,28 +11,34 @@ interface GameCardProps {
 
 const GameCard = ({ gameDetails }: GameCardProps) => {
   return (
-    <div className="group relative rounded-xl overflow-hidden backdrop-blur-sm bg-surface/30 hover:bg-surface/50 transition-all duration-300">
+    <div className="cursor-pointer group relative rounded-xl overflow-hidden backdrop-blur-md bg-surface hover:bg-surface/190 transition-all duration-300 shadow-lg">
       <div className="relative h-48">
         <Image
           src={gameDetails.background_image}
           alt={gameDetails.name}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          className="object-cover  transition-transform duration-300"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-        {gameDetails.metacritic && (
-          <div
-            className={`absolute top-3 right-3 px-2 py-1 rounded backdrop-blur-md ${
-              gameDetails.metacritic >= 75
-                ? "bg-primary/20 text-primary"
-                : gameDetails.metacritic >= 50
-                ? "bg-secondary/20 text-secondary"
-                : "bg-accent/20 text-accent"
-            } font-medium flex items-center gap-1`}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
+        {gameDetails?.metacritic && (
+          <OverlayTrigger
+            placement="top"
+            overlay={<Tooltip id="metacritic">Metacritic Score</Tooltip>}
           >
-            <FontAwesomeIcon icon={faStar} className="h-3 w-3" />
-            {gameDetails.metacritic}
-          </div>
+            <div
+              className={`text-white absolute top-3 right-3 px-2 py-1 rounded backdrop-blur-xl ${
+                gameDetails.metacritic >= 75
+                  ? "bg-primary/20  border border-primary/20"
+                  : gameDetails.metacritic >= 50
+                  ? "bg-secondary/20  border border-secondary/20"
+                  : "bg-accent/20  border border-accent/20"
+              } font-medium flex items-center gap-1`}
+            >
+              <FontAwesomeIcon icon={faStar} className="h-3 w-3" />
+              {gameDetails.metacritic}
+            </div>
+          </OverlayTrigger>
         )}
       </div>
       <div className="p-4">
@@ -39,21 +46,28 @@ const GameCard = ({ gameDetails }: GameCardProps) => {
           {gameDetails.name}
         </h2>
         <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2 text-white/60">
+          <div className="flex items-center gap-2 text-text/60">
             <FontAwesomeIcon icon={faCalendarDay} className="h-4 w-4" />
             <span>{new Date(gameDetails.released).toLocaleDateString()}</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             {gameDetails.parent_platforms?.map((platform: Platform) => (
-              <span
+              <OverlayTrigger
                 key={platform.platform.id}
-                className="text-white/60 hover:text-white transition-colors"
+                placement="top"
+                overlay={
+                  <Tooltip id={`tooltip-${platform.platform.id}`}>
+                    {platform.platform.name}
+                  </Tooltip>
+                }
               >
-                {getLogo({
-                  platform: platform.platform.slug,
-                  className: "h-4 w-4",
-                })}
-              </span>
+                <span className="text-text/60 hover:text-text transition-colors cursor-pointer">
+                  {getLogo({
+                    platform: platform.platform.slug,
+                    className: "h-4 w-4",
+                  })}
+                </span>
+              </OverlayTrigger>
             ))}
           </div>
         </div>

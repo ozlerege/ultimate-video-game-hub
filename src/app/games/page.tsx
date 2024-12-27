@@ -3,16 +3,19 @@ import GameCard from "@/components/GameCard";
 import { Game } from "@/interfaces/ApiInterfaces";
 import { getGames } from "@/services/rawg-api";
 import { useState, useEffect } from "react";
+import Spinner from "react-bootstrap/esm/Spinner";
 export default function GamesPage() {
   const [games, setGames] = useState<Game[]>([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchGames = async () => {
+      setIsLoading(true);
       const games = await getGames({
         page: 1,
         page_size: 20,
       });
       setGames(games.results);
+      setIsLoading(false);
     };
     fetchGames();
   }, []);
@@ -23,9 +26,13 @@ export default function GamesPage() {
         Games
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {games.map((game) => (
-          <GameCard key={game.id} gameDetails={game} />
-        ))}
+        {isLoading ? (
+          <div className="flex justify-center items-center h-screen">
+            <Spinner animation="border" variant="primary" />
+          </div>
+        ) : (
+          games.map((game) => <GameCard key={game.id} gameDetails={game} />)
+        )}
       </div>
     </div>
   );
