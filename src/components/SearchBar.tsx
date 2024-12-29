@@ -42,7 +42,7 @@ export default function SearchBar() {
     setQuery(e.target.value);
   };
   return (
-    <div className="relative w-full mx-auto px-4" ref={searchRef}>
+    <div className="relative w-full mx-auto" ref={searchRef}>
       <input
         type="text"
         placeholder="Search a game..."

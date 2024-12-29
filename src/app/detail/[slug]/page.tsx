@@ -86,7 +86,7 @@ export default function DetailPage() {
   }, [gameId]);
 
   return (
-    <div className="p-8">
+    <div className="mt-8">
       {isLoading ? (
         <div className="space-y-4 animate-pulse">
           <div className="h-10 w-2/3 bg-surface rounded-lg"></div>
@@ -212,7 +212,7 @@ export default function DetailPage() {
                         </div>
                       </div>
                     )}
-                    {game?.playtime && (
+                    {game?.playtime != 0 && (
                       <div>
                         <h3 className="text-sm font-semibold text-gray-400 mb-1">
                           Playtime
