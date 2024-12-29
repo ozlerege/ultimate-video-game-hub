@@ -15,7 +15,7 @@ const Sidebar = () => {
   const navItems = [
     { name: "Games", href: "/games", icon: faGamepad },
     { name: "Trending", href: "/trending", icon: faFire },
-    { name: "Calendar", href: "/calendar", icon: faCalendar },
+    { name: "Upcoming", href: "/upcoming", icon: faCalendar },
     { name: "News", href: "/news", icon: faNewspaper },
   ];
 
