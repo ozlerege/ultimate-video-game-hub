@@ -1,10 +1,8 @@
-import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faCalendarDay } from "@fortawesome/free-solid-svg-icons";
 import type { Game, Platform } from "@/interfaces/ApiInterfaces";
 import { getLogo } from "./getLogo";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 interface GameCardProps {
   gameDetails: Game;
@@ -17,8 +15,9 @@ const GameCard = ({ gameDetails }: GameCardProps) => {
       className="block hover:scale-105 transition-all duration-300"
     >
       <div className="cursor-pointer group relative rounded-xl overflow-hidden backdrop-blur-md bg-surface hover:bg-surface/190 transition-all duration-300 shadow-lg h-[360px]">
-        <div className="relative h-48">
+        <div className="relative h-[200px]">
           <div className="image-container h-full w-full">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={gameDetails.background_image || "/placeholder-game.jpg"}
               alt={gameDetails.name}
@@ -56,7 +55,7 @@ const GameCard = ({ gameDetails }: GameCardProps) => {
           )}
         </div>
         <div className="p-4 flex flex-col justify-between h-[168px]">
-          <h2 className="text-md font-semibold text-text line-clamp-2">
+          <h2 className="text-lg font-semibold text-text line-clamp-2">
             {gameDetails.name}
           </h2>
           <div className="flex items-center justify-between text-sm">

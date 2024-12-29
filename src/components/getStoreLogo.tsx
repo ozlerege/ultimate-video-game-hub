@@ -12,6 +12,12 @@ export const getStoreLogo = (storeName: string): string => {
       return "https://upload.wikimedia.org/wikipedia/commons/e/e5/Xbox_Logo.svg";
     case "Epic Games Store":
       return "https://upload.wikimedia.org/wikipedia/commons/3/31/Epic_Games_logo.svg";
+    case "GOG":
+      return "https://upload.wikimedia.org/wikipedia/commons/2/2e/GOG.com_logo.svg";
+    case "Google Play Store":
+      return "https://upload.wikimedia.org/wikipedia/commons/7/7a/Google_Play_2022_logo.svg";
+    case "Apple App Store":
+      return "https://upload.wikimedia.org/wikipedia/commons/6/67/App_Store_%28iOS%29.svg";
     default:
       return "/placeholder-game.jpg";
   }

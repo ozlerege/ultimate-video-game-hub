@@ -2,6 +2,7 @@
 import {
   Game,
   Metacritic,
+  RedditPost,
   Screenshot,
   Store,
 } from "@/interfaces/ApiInterfaces";
@@ -11,17 +12,19 @@ import {
   getGameScreenshots,
   getGameSeries,
   getGameStores,
+  getRedditPosts,
 } from "@/services/rawg-api";
 
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import GameCard from "@/components/GameCard";
 import { getStore } from "@/components/getStore";
 import { getStoreLogo } from "@/components/getStoreLogo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import Link from "next/link";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 type Params = {
   slug: string;
 };
@@ -34,10 +37,9 @@ export default function DetailPage() {
   const [dlc, setDLC] = useState<Game[] | null>(null);
   const [series, setSeries] = useState<Game[] | null>(null);
   const [stores, setStores] = useState<Store[] | null>(null);
-
   const [isLoading, setIsLoading] = useState(true);
   const [gameId, setGameId] = useState<number | null>(null);
-
+  const [redditPosts, setRedditPosts] = useState<RedditPost[] | null>(null);
   useEffect(() => {
     if (!slug) return;
 
@@ -59,17 +61,20 @@ export default function DetailPage() {
     const fetchAdditionalData = async () => {
       setIsLoading(true);
       try {
-        const [screenshots, dlc, series, stores] = await Promise.all([
-          getGameScreenshots(gameId),
-          getGameDLC(gameId),
-          getGameSeries(gameId),
-          getGameStores(gameId),
-        ]);
+        const [screenshots, dlc, series, stores, redditPosts] =
+          await Promise.all([
+            getGameScreenshots(gameId),
+            getGameDLC(gameId),
+            getGameSeries(gameId),
+            getGameStores(gameId),
+            getRedditPosts(gameId),
+          ]);
 
         setScreenshots(screenshots);
         setDLC(dlc);
         setSeries(series);
         setStores(stores);
+        setRedditPosts(redditPosts);
       } catch (error) {
         console.error("Error fetching additional data:", error);
       } finally {
@@ -143,13 +148,17 @@ export default function DetailPage() {
                               key={index}
                               className="flex-none relative w-[280px] aspect-video rounded-lg overflow-hidden group"
                             >
-                              <img
-                                src={
-                                  screenshot.image ?? "/placeholder-game.jpg"
-                                }
-                                alt={`${game?.name} screenshot ${index + 1}`}
-                                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                              />
+                              <Zoom>
+                                {/*eslint-disable-next-line @next/next/no-img-element*/}
+                                <img
+                                  src={
+                                    screenshot.image ?? "/placeholder-game.jpg"
+                                  }
+                                  alt={`${game?.name} screenshot ${index + 1}`}
+                                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                />
+                              </Zoom>
+
                               {/* <Image
                                 src={screenshot.image}
                                 alt={`${game?.name} screenshot ${index + 1}`}
@@ -366,7 +375,9 @@ export default function DetailPage() {
                       key={index}
                       className="flex items-center justify-between py-1 px-3 rounded-lg hover:bg-white/5"
                     >
-                      <p className="text-gray-300">{platform.platform.name}</p>
+                      <p className="text-gray-  300">
+                        {platform.platform.name}
+                      </p>
                       <div className="flex-1 border-b border-dotted border-gray-700 mx-4" />
                       <p className="font-semibold text-primary">
                         {platform.metascore}
@@ -376,6 +387,46 @@ export default function DetailPage() {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div className="mt-10">
+        <div className="rounded-xl overflow-x-auto backdrop-blur-md bg-surface  transition-all duration-300 shadow-lg">
+          <div className="p-5">
+            <h2 className="text-2xl font-bold text-gray-400 mb-4">
+              Most Recent Reddit Posts
+            </h2>
+            {redditPosts && (
+              <div className="flex flex-wrap gap-4 ">
+                {redditPosts.map((post) => (
+                  <Link href={post.url} target="_blank" key={post.id}>
+                    <div className="border border-gray-700 rounded-lg p-4 w-[300px] h-[200px] overflow-hidden hover:border-primary/50 transition-colors">
+                      <div className="flex items-center gap-2 mb-3">
+                        <img
+                          src={"/reddit-logo.svg"}
+                          alt={post.name}
+                          className="w-6 h-6"
+                        />
+                        <div className="text-lg font-bold line-clamp-1">
+                          {post.name}
+                        </div>
+                      </div>
+                      {post.image && (
+                        <img
+                          src={post.image}
+                          alt={post.name}
+                          className="w-full h-32 object-cover rounded-lg mb-3"
+                        />
+                      )}
+                      <div
+                        className="text-gray-400 text-sm line-clamp-4 overflow-hidden"
+                        dangerouslySetInnerHTML={{ __html: post.text }}
+                      />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

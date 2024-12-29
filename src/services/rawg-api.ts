@@ -2,6 +2,7 @@ import {
   Achievement,
   Game,
   GameList,
+  RedditPost,
   Screenshot,
   Store,
 } from "@/interfaces/ApiInterfaces";
@@ -141,4 +142,14 @@ export const getGameAchievements = async (
   );
   const data = await response.json();
   return data;
+};
+
+export const getRedditPosts = async (gameId: number): Promise<RedditPost[]> => {
+  const apiKey = getApiKey();
+  const queryParams = new URLSearchParams({ key: apiKey });
+  const response = await fetch(
+    `${RAWG_API_URL}/games/${gameId}/reddit?${queryParams}`
+  );
+  const data = await response.json();
+  return data.results;
 };

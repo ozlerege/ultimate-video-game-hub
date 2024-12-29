@@ -7,10 +7,16 @@ export const getStore = (storeId: number): string => {
       return "Microsoft Store";
     case 3:
       return "Playstation Store";
+    case 4:
+      return "Apple App Store";
+    case 5:
+      return "GOG";
     case 6:
       return "Nintendo Store";
     case 7:
       return "Xbox Store";
+    case 8:
+      return "Google Play Store";
     case 11:
       return "Epic Games Store";
     default:
