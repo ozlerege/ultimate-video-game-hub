@@ -21,11 +21,14 @@ export default function GamesPage() {
   }, []);
 
   return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mb-8">
+    <div className="mt-8">
+      <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
         Games
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <span className="text-sm text-text font-medium">
+        Discover the best games on the platform
+      </span>
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {isLoading ? (
           <div className="flex justify-center items-center h-screen">
             <Spinner animation="border" variant="primary" />

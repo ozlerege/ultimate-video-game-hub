@@ -17,6 +17,8 @@ export const getStore = (storeId: number): string => {
       return "Xbox Store";
     case 8:
       return "Google Play Store";
+    case 9:
+      return "itch.io";
     case 11:
       return "Epic Games Store";
     default:

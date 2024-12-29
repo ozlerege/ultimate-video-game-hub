@@ -18,6 +18,8 @@ export const getStoreLogo = (storeName: string): string => {
       return "https://upload.wikimedia.org/wikipedia/commons/7/7a/Google_Play_2022_logo.svg";
     case "Apple App Store":
       return "https://upload.wikimedia.org/wikipedia/commons/6/67/App_Store_%28iOS%29.svg";
+    case "itch.io":
+      return "https://www.svgrepo.com/show/341939/itch-io.svg";
     default:
       return "/placeholder-game.jpg";
   }

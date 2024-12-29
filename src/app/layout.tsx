@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import "../styles/tooltip.css";
 import Sidebar from "@/components/Sidebar";
+import SearchBar from "@/components/SearchBar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,9 +34,14 @@ export default function RootLayout({
       >
         <div className="flex min-h-screen">
           <Sidebar />
-          <main className="flex-1 ml-64 overflow-x-hidden">
-            <div className="container mx-auto">{children}</div>
-          </main>
+          <div className="ml-64 p-4 w-full">
+            <div className="container mx-auto">
+              <SearchBar />
+            </div>
+            <main className=" overflow-x-hidden">
+              <div className="container mx-auto">{children}</div>
+            </main>
+          </div>
         </div>
       </body>
     </html>
