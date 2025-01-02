@@ -4,7 +4,9 @@ import {
   Metacritic,
   RedditPost,
   Screenshot,
+  ScreenshotAndTrailer,
   Store,
+  Trailer,
 } from "@/interfaces/ApiInterfaces";
 import {
   getGame,
@@ -12,10 +14,10 @@ import {
   getGameScreenshots,
   getGameSeries,
   getGameStores,
+  getGameTrailers,
   getRedditPosts,
 } from "@/services/rawg-api";
-
-import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import { faCartShopping, faGlobe } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import GameCard from "@/components/GameCard";
@@ -23,8 +25,8 @@ import { getStore } from "@/components/getStore";
 import { getStoreLogo } from "@/components/getStoreLogo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
+import ScreenshotAndTrailerModal from "@/components/ScreenshotAndTrailerModal";
 type Params = {
   slug: string;
 };
@@ -40,6 +42,10 @@ export default function DetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [gameId, setGameId] = useState<number | null>(null);
   const [redditPosts, setRedditPosts] = useState<RedditPost[] | null>(null);
+  const [trailers, setTrailers] = useState<Trailer[] | null>(null);
+  const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [image, setImage] = useState<string | null>(null);
+  const [type, setType] = useState<string | null>(null);
   useEffect(() => {
     if (!slug) return;
 
@@ -61,13 +67,14 @@ export default function DetailPage() {
     const fetchAdditionalData = async () => {
       setIsLoading(true);
       try {
-        const [screenshots, dlc, series, stores, redditPosts] =
+        const [screenshots, dlc, series, stores, redditPosts, trailers] =
           await Promise.all([
             getGameScreenshots(gameId),
             getGameDLC(gameId),
             getGameSeries(gameId),
             getGameStores(gameId),
             getRedditPosts(gameId),
+            getGameTrailers(gameId),
           ]);
 
         setScreenshots(screenshots);
@@ -75,6 +82,7 @@ export default function DetailPage() {
         setSeries(series);
         setStores(stores);
         setRedditPosts(redditPosts);
+        setTrailers(trailers);
       } catch (error) {
         console.error("Error fetching additional data:", error);
       } finally {
@@ -85,8 +93,17 @@ export default function DetailPage() {
     fetchAdditionalData();
   }, [gameId]);
 
+  const screenshots_and_trailers: ScreenshotAndTrailer[] =
+    trailers?.concat(screenshots);
+
   return (
     <div className="mt-8">
+      <ScreenshotAndTrailerModal
+        type={type ?? ""}
+        isOpen={imageModalOpen}
+        onClose={() => setImageModalOpen(false)}
+        image={image ?? ""}
+      />
       {isLoading ? (
         <div className="space-y-4 animate-pulse">
           <div className="h-10 w-2/3 bg-surface rounded-lg"></div>
@@ -121,7 +138,7 @@ export default function DetailPage() {
           <div className="rounded-xl overflow-hidden backdrop-blur-md bg-surface  transition-all duration-300 shadow-lg">
             <div className="grid md:grid-cols-2 gap-6 p-5">
               <div>
-                <div className="relative aspect-video w-full">
+                <div className="relative aspect-video w-full ">
                   <img
                     src={game?.background_image ?? "/placeholder-game.jpg"}
                     alt={game?.name ?? ""}
@@ -143,32 +160,48 @@ export default function DetailPage() {
                     <div className="rounded-xl overflow-hidden bg-surface transition-all duration-300 shadow-lg">
                       <div className="p-5">
                         <div className="flex overflow-x-auto gap-4 pb-4 custom-scrollbar-visible">
-                          {screenshots.map((screenshot, index) => (
-                            <div
-                              key={index}
-                              className="flex-none relative w-[280px] aspect-video rounded-lg overflow-hidden group"
-                            >
-                              <Zoom>
-                                {/*eslint-disable-next-line @next/next/no-img-element*/}
-                                <img
-                                  src={
-                                    screenshot.image ?? "/placeholder-game.jpg"
-                                  }
-                                  alt={`${game?.name} screenshot ${index + 1}`}
-                                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                />
-                              </Zoom>
-
-                              {/* <Image
-                                src={screenshot.image}
-                                alt={`${game?.name} screenshot ${index + 1}`}
-                                fill
-                                sizes="180px"
-                                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                              /> */}
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                            </div>
-                          ))}
+                          {screenshots_and_trailers?.map(
+                            (item: ScreenshotAndTrailer, index) => {
+                              return (
+                                <div
+                                  key={index}
+                                  className="cursor-pointer flex-none relative w-[280px] aspect-video rounded-lg overflow-hidden group"
+                                  onClick={() => {
+                                    setImageModalOpen(true);
+                                    if (item?.video) {
+                                      setType("trailer");
+                                      setImage(item.video);
+                                    } else {
+                                      setType("screenshot");
+                                      setImage(item.image);
+                                    }
+                                  }}
+                                >
+                                  <img
+                                    src={item.image ?? "/placeholder-game.jpg"}
+                                    alt={`${game?.name} screenshot ${
+                                      index + 1
+                                    }`}
+                                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                  {item.video && (
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                      <div className="w-12 h-12 rounded-full bg-black/50 flex items-center justify-center backdrop-blur-sm border border-white/20 group-hover:bg-primary/80 transition-colors">
+                                        <svg
+                                          className="w-6 h-6 text-white"
+                                          fill="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path d="M8 5v14l11-7z" />
+                                        </svg>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            }
+                          )}
                         </div>
                       </div>
                     </div>
@@ -187,6 +220,17 @@ export default function DetailPage() {
                     Released:{" "}
                     {new Date(game?.released ?? "").toLocaleDateString()}
                   </span>
+
+                  {game?.website && (
+                    <a
+                      href={game.website}
+                      target="_blank"
+                      className="px-3 py-1 rounded-full bg-primary border border-white/20 text-black flex items-center gap-2"
+                    >
+                      <FontAwesomeIcon icon={faGlobe} className="h-3 w-3" />
+                      Website
+                    </a>
+                  )}
                 </div>
 
                 <p className="text-gray-200">

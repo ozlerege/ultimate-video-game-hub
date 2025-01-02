@@ -168,3 +168,19 @@ export interface RedditPost {
   username_url: string;
   created: string;
 }
+
+export interface Trailer {
+  video: string;
+  id: number;
+  name: string;
+  preview: string;
+
+  data: {
+    max: string;
+  };
+}
+
+export interface ScreenshotAndTrailer {
+  image: string;
+  video: string;
+}

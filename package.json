@@ -13,6 +13,7 @@
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
@@ -20,7 +21,8 @@
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.7",
     "react-dom": "^19.0.0",
-    "react-medium-image-zoom": "^5.2.12"
+    "react-medium-image-zoom": "^5.2.12",
+    "react-player": "^2.16.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

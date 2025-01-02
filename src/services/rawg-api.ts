@@ -5,6 +5,7 @@ import {
   RedditPost,
   Screenshot,
   Store,
+  Trailer,
 } from "@/interfaces/ApiInterfaces";
 
 const RAWG_API_URL = "https://api.rawg.io/api";
@@ -35,8 +36,8 @@ const getApiKey = () => {
   return apiKey;
 };
 
+const apiKey = getApiKey();
 export const getGame = async (slug: string): Promise<Game> => {
-  const apiKey = getApiKey();
   const queryParams = new URLSearchParams({ key: apiKey });
   const response = await fetch(`${RAWG_API_URL}/games/${slug}?${queryParams}`);
   const data = await response.json();
@@ -46,7 +47,6 @@ export const getGame = async (slug: string): Promise<Game> => {
 export const getGames = async (
   params: GetGamesParams = {}
 ): Promise<GamesResponse> => {
-  const apiKey = getApiKey();
   const queryParams = new URLSearchParams({
     key: apiKey,
     ...Object.fromEntries(
@@ -68,7 +68,6 @@ export const getGames = async (
 };
 
 export const getGameDetails = async (gameId: number): Promise<GameList> => {
-  const apiKey = getApiKey();
   const queryParams = new URLSearchParams({ key: apiKey });
 
   try {
@@ -88,7 +87,6 @@ export const getGameDetails = async (gameId: number): Promise<GameList> => {
 export const getGameScreenshots = async (
   gameId: number
 ): Promise<Screenshot[]> => {
-  const apiKey = getApiKey();
   const queryParams = new URLSearchParams({ key: apiKey });
   const response = await fetch(
     `${RAWG_API_URL}/games/${gameId}/screenshots?${queryParams}`
@@ -98,7 +96,6 @@ export const getGameScreenshots = async (
 };
 
 export const getGameDLC = async (gameId: number): Promise<Game[]> => {
-  const apiKey = getApiKey();
   const queryParams = new URLSearchParams({ key: apiKey });
   const response = await fetch(
     `${RAWG_API_URL}/games/${gameId}/additions?${queryParams}`
@@ -107,7 +104,6 @@ export const getGameDLC = async (gameId: number): Promise<Game[]> => {
   return data.results;
 };
 export const getGameSeries = async (gameId: number): Promise<Game[]> => {
-  const apiKey = getApiKey();
   const queryParams = new URLSearchParams({ key: apiKey });
   const response = await fetch(
     `${RAWG_API_URL}/games/${gameId}/game-series?${queryParams}`
@@ -116,7 +112,6 @@ export const getGameSeries = async (gameId: number): Promise<Game[]> => {
   return data.results;
 };
 export const getGameStores = async (gameId: number): Promise<Store[]> => {
-  const apiKey = getApiKey();
   const queryParams = new URLSearchParams({ key: apiKey });
   try {
     const response = await fetch(
@@ -135,7 +130,6 @@ export const getGameStores = async (gameId: number): Promise<Store[]> => {
 export const getGameAchievements = async (
   gameId: number
 ): Promise<Achievement[]> => {
-  const apiKey = getApiKey();
   const queryParams = new URLSearchParams({ key: apiKey });
   const response = await fetch(
     `${RAWG_API_URL}/games/${gameId}/achievements?${queryParams}`
@@ -145,11 +139,25 @@ export const getGameAchievements = async (
 };
 
 export const getRedditPosts = async (gameId: number): Promise<RedditPost[]> => {
-  const apiKey = getApiKey();
   const queryParams = new URLSearchParams({ key: apiKey });
   const response = await fetch(
     `${RAWG_API_URL}/games/${gameId}/reddit?${queryParams}`
   );
   const data = await response.json();
   return data.results;
+};
+
+export const getGameTrailers = async (gameId: number): Promise<Trailer[]> => {
+  const queryParams = new URLSearchParams({ key: apiKey });
+  const response = await fetch(
+    `${RAWG_API_URL}/games/${gameId}/movies?${queryParams}`
+  );
+  const data = await response.json();
+  return data.results.map((t: Trailer) => ({
+    id: t.id,
+    name: t.name,
+    video: t.data?.max || "",
+    image: t.preview || "",
+    preview: t.preview,
+  }));
 };
